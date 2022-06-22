@@ -18,13 +18,17 @@ services:
       context: .
       dockerfile: contrib/docker/Dockerfile.apache
     image: pixelfed
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
     restart: unless-stopped
     env_file:
       - .env.docker
     volumes:
-      - app-storage:/var/www/storage
-      - app-bootstrap:/var/www/bootstrap
-      - "./.env.docker:/var/www/.env"
+      - /home/ubuntu/data/appst:/var/www/storage
+      - /home/ubuntu/data/bootstrap:/var/www/bootstrap
+      - ./.env.docker:/var/www/.env
     networks:
       - external
       - internal
@@ -39,12 +43,16 @@ services:
       context: .
       dockerfile: contrib/docker/Dockerfile.apache
     image: pixelfed
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
     restart: unless-stopped
     env_file:
       - .env.docker
     volumes:
-      - app-storage:/var/www/storage
-      - app-bootstrap:/var/www/bootstrap
+      - /home/ubuntu/data/appst:/var/www/storage
+      - /home/ubuntu/data/bootstrap:/var/www/bootstrap
     networks:
       - external
       - internal
@@ -56,6 +64,10 @@ services:
 ## DB and Cache
   db:
     image: mysql:8.0
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
     restart: unless-stopped
     networks:
       - internal
@@ -63,15 +75,19 @@ services:
     env_file:
       - .env.docker
     volumes:
-      - "db-data:/var/lib/mysql"
+      - "/home/ubuntu/data/mysql:/var/lib/mysql"
 
   redis:
     image: redis:5-alpine
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
     env_file:
       - .env.docker
     volumes:
-      - "redis-data:/data"
+      - /home/ubuntu/data/redis:/data
     networks:
       - internal
 
@@ -86,3 +102,4 @@ networks:
     internal: true
   external:
     driver: bridge
+                                
